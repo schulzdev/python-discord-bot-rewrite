@@ -4,6 +4,7 @@ from discord.ext import commands
 import youtube_dl
 from discord.voice_client import VoiceClient
 import asyncio
+import time
 
 with open("./data.json") as file:
     token_file = json.load(file)
@@ -91,6 +92,26 @@ async def play(ctx, url):
 async def stop(ctx):
     user_client = ctx.message.guild.voice_client
     await user_client.disconnect()
-
+    
+    
+@bot.command()
+async def delete(ctx, amount=5):
+    roles = []
+    for role in ctx.message.author.roles:
+        roles.append(role.name)
+        
+    if "Admin" in roles:
+        amount = int(amount) + 1
+        await ctx.channel.purge(limit = amount)
+        await ctx.send(f"{amount} Messages deleted.")
+        time.sleep(1)
+        await ctx.channel.purge(limit=1)
+    else:
+        await ctx.send(f"{ctx.message.author.mention} You do not have the rights to delete messages!")
+        time.sleep(1)
+        await ctx.channel.purge(limit=2)
+    
+    
+    
 
 bot.run(token)
